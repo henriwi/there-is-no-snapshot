@@ -3,7 +3,17 @@
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>VERSION</name>
+          <description>The Major.Minor version to build. Added is buildnumber</description>
+          <defaultValue>1.0</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
@@ -27,10 +37,13 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+    <hudson.tasks.Shell>
+      <command>echo version=${VERSION}.${BUILD_NUMBER} &gt; gradle.properties</command>
+    </hudson.tasks.Shell>
     <hudson.plugins.gradle.Gradle plugin="gradle@1.24">
       <description></description>
       <switches></switches>
-      <tasks>build</tasks>
+      <tasks>clean build</tasks>
       <rootBuildScriptDir></rootBuildScriptDir>
       <buildFile></buildFile>
       <gradleName>(Default)</gradleName>
@@ -40,6 +53,14 @@
       <useWorkspaceAsHome>false</useWorkspaceAsHome>
     </hudson.plugins.gradle.Gradle>
   </builders>
-  <publishers/>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>build/libs/*.jar</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
   <buildWrappers/>
 </project>
