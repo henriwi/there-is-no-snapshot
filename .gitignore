@@ -11,3 +11,6 @@ gradle-app.setting
 jenkins_home/*
 !jenkins_home/jobs
 builds/
+lastStable
+lastSuccessful
+nextBuildNumber
