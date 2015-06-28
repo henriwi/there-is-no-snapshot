@@ -41,7 +41,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo version=${VERSION}.${BUILD_NUMBER} &gt; gradle.properties</command>
+      <command>env
+echo version=${VERSION}.${BUILD_NUMBER} &gt;&gt; gradle.properties</command>
     </hudson.tasks.Shell>
     <hudson.plugins.gradle.Gradle plugin="gradle@1.24">
       <description></description>
@@ -60,7 +61,7 @@
     <hudson.tasks.ArtifactArchiver>
       <artifacts>build/libs/*.jar</artifacts>
       <allowEmptyArchive>false</allowEmptyArchive>
-      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
     </hudson.tasks.ArtifactArchiver>
@@ -69,11 +70,29 @@
         <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters plugin="parameterized-trigger@2.27">
           <properties>INITIAL_PROJECT=${JOB_NAME}
 INITIAL_BUILD_NUMBER=${BUILD_NUMBER}
+INITIAL_COMMIT_ID=${GIT_COMMIT}
 FULL_VERSION=${VERSION}.${BUILD_NUMBER}</properties>
         </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
       </configs>
       <downstreamProjectNames>HelloWorld/Deploy/Deploy-Test</downstreamProjectNames>
     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.27">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+              <properties>INITIAL_PROJECT=${JOB_NAME}
+INITIAL_BUILD_NUMBER=${BUILD_NUMBER}
+INITIAL_COMMIT_ID=${GIT_COMMIT}
+FULL_VERSION=${VERSION}.${BUILD_NUMBER}</properties>
+            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>HelloWorld/Master-Has-Snapshots</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
   </publishers>
   <buildWrappers>
     <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.3">

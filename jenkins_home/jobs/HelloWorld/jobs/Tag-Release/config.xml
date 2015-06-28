@@ -12,7 +12,18 @@ TODO</description>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
-  <builders/>
-  <publishers/>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/sh
+echo git tag ${FULL_VERSION} ${INITIAL_COMMIT_ID}
+echo git push --tags</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger plugin="build-pipeline-plugin@1.4.7">
+      <configs/>
+      <downstreamProjectNames>HelloWorld/Deploy/Deploy-Prod</downstreamProjectNames>
+    </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+  </publishers>
   <buildWrappers/>
 </project>
