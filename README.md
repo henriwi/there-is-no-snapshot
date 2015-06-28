@@ -5,3 +5,4 @@ Gradle + Build pipeline. Example project for the presentation "There is no snaps
 ```docker build -t nosnaps .```
 
 ```docker run --rm -p 8080:8080 -v $(pwd)/jenkins_home:/var/jenkins_home --name nosnaps nosnaps```
+This might take considerable time the first time. 
