@@ -87,7 +87,7 @@ INITIAL_COMMIT_ID=${GIT_COMMIT}
 FULL_VERSION=${VERSION}.${BUILD_NUMBER}</properties>
             </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
           </configs>
-          <projects>HelloWorld/Master-Has-Snapshots</projects>
+          <projects>HelloWorld/Release/Master-Has-Snapshots</projects>
           <condition>SUCCESS</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
         </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>

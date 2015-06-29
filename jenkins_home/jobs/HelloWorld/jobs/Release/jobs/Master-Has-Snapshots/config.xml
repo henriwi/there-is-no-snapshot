@@ -48,7 +48,7 @@
       <configs>
         <hudson.plugins.parameterizedtrigger.CurrentBuildParameters plugin="parameterized-trigger@2.27"/>
       </configs>
-      <downstreamProjectNames>HelloWorld/Tag-Release</downstreamProjectNames>
+      <downstreamProjectNames>HelloWorld/Release/Tag-Release</downstreamProjectNames>
     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
   </publishers>
   <buildWrappers/>
