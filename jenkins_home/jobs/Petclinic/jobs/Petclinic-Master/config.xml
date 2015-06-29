@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project>
+<maven2-moduleset plugin="maven-plugin@2.7.1">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -8,7 +8,7 @@
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>VERSION</name>
-          <description>The Major.Minor version to build. Added is buildnumber</description>
+          <description>Major.Minor version. Usually this build is trigger by a scm update. As all init builds might be.</description>
           <defaultValue>1.0</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -18,7 +18,7 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/judoole/gradle-hello-world-java.git</url>
+        <url>https://github.com/spring-projects/spring-petclinic.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -27,9 +27,6 @@
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <browser class="hudson.plugins.git.browser.AssemblaWeb">
-      <url></url>
-    </browser>
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
@@ -39,25 +36,32 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
-  <builders>
-    <hudson.plugins.gradle.Gradle plugin="gradle@1.24">
-      <description></description>
-      <switches></switches>
-      <tasks>clean build</tasks>
-      <rootBuildScriptDir></rootBuildScriptDir>
-      <buildFile></buildFile>
-      <gradleName>(Default)</gradleName>
-      <useWrapper>true</useWrapper>
-      <makeExecutable>false</makeExecutable>
-      <fromRootBuildScriptDir>true</fromRootBuildScriptDir>
-      <useWorkspaceAsHome>false</useWorkspaceAsHome>
-    </hudson.plugins.gradle.Gradle>
-  </builders>
+  <rootModule>
+    <groupId>org.springframework.samples</groupId>
+    <artifactId>spring-petclinic</artifactId>
+  </rootModule>
+  <goals>clean test package</goals>
+  <defaultGoals>install</defaultGoals>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <siteArchivingDisabled>false</siteArchivingDisabled>
+  <fingerprintingDisabled>false</fingerprintingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+  <reporters/>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>build/libs/*.jar</artifacts>
+      <artifacts>target/*.war</artifacts>
       <allowEmptyArchive>false</allowEmptyArchive>
-      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
     </hudson.tasks.ArtifactArchiver>
@@ -71,7 +75,7 @@ INITIAL_COMMIT_ID=${GIT_COMMIT}
 FULL_VERSION=${VERSION}.${BUILD_NUMBER}</properties>
         </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
       </configs>
-      <downstreamProjectNames>HelloWorld/Deploy/Deploy-Test</downstreamProjectNames>
+      <downstreamProjectNames>Petclinic/Deploy/Deploy-Test</downstreamProjectNames>
     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
     <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.27">
       <configs>
@@ -85,7 +89,7 @@ INITIAL_COMMIT_ID=${GIT_COMMIT}
 FULL_VERSION=${VERSION}.${BUILD_NUMBER}</properties>
             </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
           </configs>
-          <projects>HelloWorld/Release/Master-Has-Snapshots</projects>
+          <projects>Petclinic/Release/Master-Has-Snapshots</projects>
           <condition>SUCCESS</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
         </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
@@ -97,4 +101,20 @@ FULL_VERSION=${VERSION}.${BUILD_NUMBER}</properties>
       <template>${ENV, var=&quot;VERSION&quot;}.${BUILD_NUMBER}</template>
     </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
   </buildWrappers>
-</project>
+  <prebuilders>
+    <hudson.tasks.Maven>
+      <targets>versions:set -DnewVersion=${VERSION}.${BUILD_NUMBER}</targets>
+      <mavenName>3.3</mavenName>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+  </prebuilders>
+  <postbuilders/>
+  <runPostStepsIfResult>
+    <name>FAILURE</name>
+    <ordinal>2</ordinal>
+    <color>RED</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>
