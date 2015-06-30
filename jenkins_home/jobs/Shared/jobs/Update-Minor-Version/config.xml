@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@1.25">
+      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
+        <command>//http://javadoc.jenkins-ci.org
+/* 
+* Script for upping the minor version of the starting job, named ARTIFACT_PROJECT
+* We expect every version to arrive here following this version strategy: major.minor
+*/
+import hudson.model.*
+import jenkins.model.Jenkins
+
+//Get the parameters
+def originalVersion = build.buildVariableResolver.resolve(&quot;VERSION&quot;)
+def artifactProject = build.buildVariableResolver.resolve(&quot;INITIAL_PROJECT&quot;)
+//Get the job we are upping
+def job = Jenkins.getInstance().getItemByFullName(artifactProject)
+assert job != null, &quot;Could not find job with name $artifactProject&quot;
+assert originalVersion, &quot;Missing parameter VERSION&quot;
+//Iterate and find actions of type Parameters
+job.actions.grep{ it instanceof ParametersDefinitionProperty}.each{  
+//Assume there is one named VERSION  
+  def paramVersion = it.getParameterDefinition(&apos;VERSION&apos;).defaultValue  
+  //If it is unchanged from the VERSION given to us, go ahead and up it  
+  if(paramVersion == originalVersion){      
+    def majorMinorVersion = originalVersion.tokenize(&apos;.&apos;)      
+    it.getParameterDefinition(&apos;VERSION&apos;).setDefaultValue(&quot;${majorMinorVersion[0]}.${majorMinorVersion[1].toInteger()+1}&quot;)  
+  }
+}</command>
+      </scriptSource>
+      <bindings></bindings>
+      <classpath></classpath>
+    </hudson.plugins.groovy.SystemGroovy>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

@@ -8,7 +8,7 @@ Gradle + Build pipeline. Example project for the presentation "There is no snaps
 This might take considerable time the first time.
 
 ## TODO
-- Update minor version in INITIAL_PROJECT after a successful tag. Use groovy scripting
+~~- Update minor version in INITIAL_PROJECT after a successful tag. Use groovy scripting~~
 - Use template builders. For some reason this does not work.
 - Add Authorization. Per project.
   - Use so that only a subset of users can deploy to prod
